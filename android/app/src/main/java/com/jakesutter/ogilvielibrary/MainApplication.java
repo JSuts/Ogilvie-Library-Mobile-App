@@ -1,4 +1,4 @@
-package com.invertase.rnfirebasestarter;
+package com.jakesutter.ogilvielibrary;
 
 import android.app.Application;
 

@@ -53,7 +53,7 @@ export default class App extends React.Component {
           {firebase.config.nativeModuleExists && <Text style={styles.module}>Remote Config</Text>}
           {firebase.storage.nativeModuleExists && <Text style={styles.module}>Storage</Text>}
         </View>
-        </View>    
+        </View>
       </ScrollView>
     );
   }
