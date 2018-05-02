@@ -9,7 +9,7 @@ import FAQ  from '../screens/FAQ';
 import Home  from '../screens/Home';
 import MapScreen  from '../screens/Map';
 import Sidebar  from '../components/Sidebar';
-import SignIn  from '../screens/SignIn';
+import Auth  from '../screens/Auth';
 import Settings  from '../screens/Settings';
 
 
@@ -47,8 +47,8 @@ const HomeDrawerNavigator = DrawerNavigator(
 
 const AuthStack = StackNavigator(
   {
-    SignIn: {
-      screen: SignIn
+    Auth: {
+      screen: Auth
     }
   },
   {
