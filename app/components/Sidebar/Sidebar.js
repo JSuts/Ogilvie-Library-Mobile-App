@@ -3,8 +3,9 @@ import {
   StyleSheet,
   Image
 } from 'react-native';
+import styles from './styles'
 
-import { Body, Button, Container, Content, Drawer, Footer, FooterTab, Header, Icon, Left, List, ListItem, Right, Text, Title, Thumbnail, Spinner } from 'native-base';
+import { Container, Content, List, ListItem, Text } from 'native-base';
 
 
 
@@ -13,7 +14,7 @@ export default class SideBar extends React.Component {
   render() {
     return (
       <Container>
-        <Content style={{ backgroundColor: "rgb(58, 132, 173)", paddingTop: 20 }}>
+        <Content style={styles.contentContainer}>
           <List
             dataArray={routes}
             renderRow={data => {

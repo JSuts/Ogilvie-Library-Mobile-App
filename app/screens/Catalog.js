@@ -3,6 +3,8 @@ import { StyleSheet, View, Image, FlatList } from 'react-native';
 import { Root, ActionSheet, Body, Button, Container, Content, Drawer, Footer, FooterTab, Header, Icon, Left, List, ListItem, Right, Text, Title, Thumbnail, Spinner } from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
 // import { store } from "../../store/store.js"
+import firebase from 'react-native-firebase'
+
 
 
 
@@ -168,6 +170,10 @@ export default class Catalog extends React.Component {
     this.state = {
       books: []
     }
+    /* When a notification is received but not displayed */
+    this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
+      firebase.notifications().displayNotification(notification)
+    });
     this._getBooks()
   }
 

@@ -1,15 +1,20 @@
 import React from "react";
 import { AsyncStorage, StatusBar } from "react-native";
-// import { store } from "../../store/store.js"
-// import { signInAction, signOutAction } from "../../actions/actions.js"
 import { List, ListItem, Container, Header, Title, Left, Icon, Right, Button, Body, Content,Text, Card, CardItem, Spinner } from "native-base";
 import { Col, Row, Grid } from "react-native-easy-grid";
 
-import firebase from 'react-native-firebase'
+import firebase from 'react-native-firebase';
+
+let db = firebase.firestore();
+let settings = db.settings;
+settings.areTimestampsInSnapshotsEnabled = true;
+db.settings = settings;
 
 export default class Home extends React.Component {
   constructor() {
     super();
+    this.userRef = db.collection('users');
+
     this.state = {
       userId: "",
       doneLoading: false,
@@ -18,20 +23,65 @@ export default class Home extends React.Component {
       lateBooks: [],
       reservations: []
     }
-    // this.ref = firebase.firestore().collection('users');
-    // AsyncStorage.getItem("userId")
-    // .then((response) => {
-    //   console.log("dbg: get userId: " + response);
-    //   this.setState({
-    //     userId: response
-    //   })
-    //   this._getFireInfo();
-    // })
+
+    /* fcmToken update listener */
+    this.onTokenRefreshListener = firebase.messaging().onTokenRefresh((fcmToken: string) => {
+      // new token received
+      this._updateToken(fcmToken);
+    });
+
+    /* When a notification is received but not displayed */
+    this.notificationListener = firebase.notifications().onNotification((notification: Notification) => {
+      firebase.notifications().displayNotification(notification);
+    });
+    AsyncStorage.getItem('userId')
+    .then((id) => {
+      this.setState({ userId: id })
+      this._getFireInfo();
+    })
+
+  }
+
+  componentDidMount() {
+    firebase.messaging().getToken()
+    .then(fcmToken => {
+      if (fcmToken) {
+        // token found
+        this._updateToken(fcmToken);
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.onTokenRefreshListener();
+    this.notificationListener();
+  }
+
+  _updateToken(token) {
+    /* check notification permissions */
+    firebase.messaging().hasPermission()
+      .then(enabled => {
+        if (enabled) {
+          /* notifications enabled */
+          this.userRef.doc(this.state.userId).set({ fcmToken: token, getNotifications: true }, { merge: true })
+        } else {
+          /* request notification permissions */
+          firebase.messaging().requestPermission()
+          .then(() => {
+            /* accepted permissions */
+            this.userRef.doc(this.state.userId).set({ fcmToken: token, getNotifications: true }, { merge: true })
+          })
+          .catch(error => {
+            /* rejected permissions */
+            this.userRef.doc(this.state.userId).set({ fcmToken: token, getNotifications: false }, { merge: true })
+          });
+        }
+      })
   }
 
   _getFireInfo() {
-    console.log("dbg: _getFireInfo start");
-    this.ref.doc(this.state.userId).get()
+    console.log("dbg: _getFireInfo start: " + this.state.userId);
+    this.userRef.doc(this.state.userId).get()
     .then((doc) => {
       let data = doc.data();
       console.log("dbg: doc.data(): " + data);

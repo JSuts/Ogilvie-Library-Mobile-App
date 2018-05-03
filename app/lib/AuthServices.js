@@ -1,6 +1,11 @@
 import firebase from 'react-native-firebase';
 import md5 from 'md5';
 
+let db = firebase.firestore();
+let settings = db.settings;
+settings.areTimestampsInSnapshotsEnabled = true;
+db.settings = settings;
+
 module.exports = {
   signIn: (username, password) => {
     return new Promise((resolve, reject) => {
@@ -8,7 +13,7 @@ module.exports = {
       username = username.toLowerCase();
       if (username != "") {
         if (password != "") {
-          let userRef = firebase.firestore().collection('users');
+          let userRef = db.collection('users');
           userRef.get()
           .then((snapshot) => {
             snapshot.forEach((doc) => {
@@ -41,27 +46,63 @@ module.exports = {
       }
     })
   },
-  signUp: (fName, lName, email, username, password) => {
+  signUp: (fName, lName, email, username, password, staffKey) => {
     return new Promise((resolve, reject) => {
-      fName = fName.trim()
-      lName = lName.trim()
-      email = email.trim().toLowerCase()
-      username = username.trim()
-      let userRef = firebase.firestore().collection('users');
+      fName = fName.trim();
+      lName = lName.trim();
+      email = email.trim().toLowerCase();
+      username = username.trim();
+      password = md5(password);
+      let userRef = db.collection('users');
       userRef.get()
       .then((snapshot) => {
+        var validData = true;
         snapshot.forEach((doc) => {
           let dbEmail = doc.data().email.toLowerCase();
           if (email == dbEmail) {
+            validData = false;
             reject("Email already registered. Please Sign In instead.")
           } else {
             let dbUsername = doc.data().username.toLowerCase()
             if (username.toLowerCase() == dbUsername) {
+              validData = false;
               reject("Username unavailable. Please choose another.")
             }
           }
         })
-        resolve("Found no matches, should be good to register")
+        if (validData) {
+          let userData = {
+            fName: fName,
+            lName: lName,
+            email: email,
+            username: username,
+            password: password,
+            fees: 0
+          }
+          if (staffKey == 'yesiamstaff') {
+            userData.role = "staff"
+          } else {
+            userData.role = "student"
+          }
+
+          userRef.add(userData)
+          .then((docRef) => {
+            docRef.get()
+            .then((doc) => {
+              let response = {
+                docId: doc.id,
+                userData: doc.data()
+              }
+              resolve(response)
+            })
+            .catch((err) => {
+              reject("docRef bad: " + err)
+            })
+          })
+          .catch((err) => {
+            reject("Unable to add user to database: " + err)
+          })
+        }
       })
       .catch((err) => {
         reject("Server Error: " + err)

@@ -21,6 +21,7 @@ export default class Auth extends React.Component {
       newUsername: "",
       newPassword: "",
       newPasswordConfirm: "",
+      staffKey: "",
       invalidEmail: false,
       invalidPasswords: false,
       dirtyField: false,

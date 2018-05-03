@@ -2,11 +2,8 @@ import { StyleSheet } from 'react-native';
 import { colors } from '../../config/styles';
 
 export default StyleSheet.create({
-  headerStyle: {
+  contentContainer: {
     backgroundColor: colors.headerText,
-    // paddingTop: 20
-  }
-  textStyle: {
-    color: colors.background
+    paddingTop: 20
   }
 })

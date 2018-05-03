@@ -156,7 +156,7 @@ const SignUp = (props) => {
                 </Label>
                 <Input
                   style={{color: 'white'}}
-                  returnKeyType='done'
+                  returnKeyType='next'
                   secureTextEntry={true}
                   enablesReturnKeyAutomatically={true}
                   onChangeText={(text) => {
@@ -196,6 +196,25 @@ const SignUp = (props) => {
               </Item>
             </Col>
           </Row>
+          <Row>
+            <Col style={{ flex: 1, borderWidth: 0 }}>
+              <Item inlineLabel >
+                <Label>
+                  Staff Key
+                </Label>
+                <Input
+                  style={{color: 'white'}}
+                  returnKeyType='done'
+                  secureTextEntry={true}
+                  enablesReturnKeyAutomatically={true}
+                  onChangeText={(text) => {
+                    props.vm.setState({ staffKey: text})
+                  }}
+                  value={props.vm.state.staffKey}
+                />
+              </Item>
+            </Col>
+          </Row>
           <Row style={{ marginTop: 10 }}>
             <Col>
               <Button
@@ -230,11 +249,25 @@ const SignUp = (props) => {
                       props.vm.state.newLName,
                       props.vm.state.newEmail,
                       props.vm.state.newUsername,
-                      props.vm.state.newPassword
+                      props.vm.state.newPassword,
+                      props.vm.state.staffKey
                     )
                     .then((response) => {
-                      alert(response)
-                      // props.vm.navigation.navigate("App");
+                      alert("Thank you for signing up!")
+                      let setPairs = [
+                        ['userId', response.docId],
+                        ['fName', response.userData.fName],
+                        ['lName', response.userData.lName],
+                        ['role', response.userData.role],
+                        ['fees', response.userData.fees.toString()],
+                        ['username', response.userData.username],
+                        ['email', response.userData.email]
+                      ]
+                      AsyncStorage.multiSet(setPairs)
+                      .catch((err) => {
+                        alert("Error saving user information to local storage. Error: " + err)
+                      })
+                      props.vm.props.navigation.navigate("App");
                     })
                     .catch((err) => {
                       props.vm.setState({

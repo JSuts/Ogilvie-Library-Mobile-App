@@ -17,7 +17,7 @@ const AppHeader = (props) => {
         </Button>
       </Left>
       <Body>
-        <Title>
+        <Title style={styles.textStyle}>
           {props.title}
         </Title>
       </Body>
