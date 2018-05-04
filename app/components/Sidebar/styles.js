@@ -3,7 +3,7 @@ import { colors } from '../../config/styles';
 
 export default StyleSheet.create({
   contentContainer: {
-    backgroundColor: colors.headerText,
+    backgroundColor: colors.offWhite,
     paddingTop: 20
   }
 })

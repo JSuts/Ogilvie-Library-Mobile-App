@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, FlatList, ImageBackground } from 'react-native';
+import { View, Image, FlatList, ImageBackground, ScrollView } from 'react-native';
 import {
   Container,
   Icon,
@@ -35,24 +35,25 @@ export default class Map extends React.Component {
   render() {
     return (
       <Container>
-        <Header style={{ backgroundColor: 'lightblue' }} >
+        <Header style={{ backgroundColor: '#555555' }}>
           <Left>
             <Button
               transparent
               onPress={() => this.props.navigation.navigate("DrawerOpen")}>
-                <Icon name="menu" style={{ color: "rgb(58, 132, 173)" }} />
-              </Button>
+              <Icon name="menu" style={{ color: "rgb(58, 132, 173)" }} />
+            </Button>
           </Left>
           <Body>
-            <Title>
-              Map
-            </Title>
+            <Icon style={{fontSize: 15}} type="FontAwesome" name="map" />
+            <Title style={{color: '#F7F7F2'}}>Map</Title>
           </Body>
           <Right />
         </Header>
-          <Content padder style={{ backgroundColor: 'black', paddingTop: 100, }} >
-            {/* <Image source={require('../../../Images/Map.png')} style={{ minHeight: 300, minWidth: 200, maxWidth: 400, maxHeight: 600 }} /> */}
-          </Content>
+
+          <ScrollView maximumZoomScale={3} minimumZoomScale={1} style={{ flex: 1, alignSelf: 'center', backgroundColor: '#261C15', paddingTop: 100 }} >
+              <Image source={require('../../assets/Map.png')} resizeMode='contain' />
+          </ScrollView>
+
         </Container>
     );
   }

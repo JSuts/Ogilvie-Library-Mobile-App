@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import styles from './styles'
 
-import { Container, Content, List, ListItem, Text } from 'native-base';
+import { Container, Content, List, ListItem, Text, Icon, Thumbnail } from 'native-base';
 
 
 
@@ -15,20 +15,66 @@ export default class SideBar extends React.Component {
     return (
       <Container>
         <Content style={styles.contentContainer}>
-          <List
-            dataArray={routes}
-            renderRow={data => {
-              return (
-                  <ListItem
-                    button
-                    onPress={() => {
-                      this.props.navigation.navigate(data)}
-                    }>
-                    <Text>{data}</Text>
-                  </ListItem>
-              );
-            }}
-          />
+          <List>
+            <ListItem
+              button
+              onPress={() => {
+                this.props.navigation.navigate("Home")}
+              }>
+              <Icon type="Entypo" name="home" />
+              <Text>Home</Text>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem
+              button
+              onPress={() => {
+                this.props.navigation.navigate("Catalog")}
+              }>
+              <Icon type="Entypo" name="book" />
+              <Text>Catalog</Text>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem
+              button
+              onPress={() => {
+                this.props.navigation.navigate("Connect")}
+              }>
+              <Thumbnail small square source={require('../../../assets/Twitter_Logo_Blue.png')} />
+              <Text>Connect</Text>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem
+              button
+              onPress={() => {
+                this.props.navigation.navigate("Map")}
+              }>
+              <Icon type="FontAwesome" name="map" />
+              <Text>Map</Text>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem
+              button
+              onPress={() => {
+                this.props.navigation.navigate("FAQ")}
+              }>
+              <Icon type="MaterialCommunityIcons" name="comment-question" />
+              <Text>FAQ</Text>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem
+              button
+              onPress={() => {
+                this.props.navigation.navigate("Settings")}
+              }>
+              <Icon type="MaterialIcons" name="settings" />
+              <Text>Settings</Text>
+            </ListItem>
+          </List>
         </Content>
       </Container>
     );

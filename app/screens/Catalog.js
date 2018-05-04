@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, FlatList } from 'react-native';
+import { StyleSheet, View, Image, FlatList, AsyncStorage } from 'react-native';
 import { Root, ActionSheet, Body, Input, Button, Container, Content, Drawer, Footer, FooterTab, Header, Icon, Left, List, ListItem, Right, Text, Title, Thumbnail, Spinner, Form, Item } from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
 // import { store } from "../../store/store.js"
@@ -12,173 +12,12 @@ db.settings = settings;
 
 
 
-// class DisplayBooks extends React.Component {
-//   constructor() {
-//     super();
-//   }
-//
-//   _checkoutBook(bookId, bookTitle) {
-//     let request = new XMLHttpRequest();
-//
-//     request.onreadystatechange = (e) => {
-//       if (request.readyState == 4) {
-//         if (request.status == 200) {
-//           let data = JSON.parse(request.responseText);
-//           let affectedRows = data.affectedRows;
-//           if (affectedRows > 0) {
-//             alert("Successfully Checked out " + bookTitle);
-//           } else {
-//             alert("Unable to check out " + bookTitle);
-//           }
-//         } else {
-//           console.log(request.status);
-//           console.warn('sending checkout request failure :\\');
-//         }
-//       }
-//     }
-//
-//     let url = "http://jake.westmec-coding.org/api/checkoutBook/"
-//     url += (store.getState().loggedInUser.toString()) + "/"
-//     url += bookId
-//
-//     request.open('GET', url);
-//     request.send();
-//
-//   }
-//
-//
-//   _reserveBook(bookId, bookTitle) {
-//     let request = new XMLHttpRequest();
-//
-//     request.onreadystatechange = (e) => {
-//       if (request.readyState == 4) {
-//         if (request.status == 200) {
-//           let data = JSON.parse(request.responseText);
-//           let affectedRows = data.affectedRows;
-//           if (affectedRows > 0) {
-//             alert("Successfully reserved " + bookTitle);
-//           } else {
-//             alert("Unable to reserve " + bookTitle);
-//           }
-//         } else {
-//           console.log(request.status);
-//           console.warn('sending checkout request failure :\\');
-//         }
-//       }
-//     }
-//
-//     let url = "http://jake.westmec-coding.org/api/reserveBook/"
-//     url += (store.getState().loggedInUser.toString()) + "/"
-//     url += bookId
-//
-//     request.open('GET', url);
-//     request.send();
-//
-//   }
-//
-//   renderBooks() {
-//     if (this.props.books.length == 0) {
-//
-//       return <Spinner color='red' />
-//     } else {
-//       return this.props.books.map((book, i) => {
-//         let bookObj = {
-//           title: book.bookTitle,
-//           author: book.authorFName + ' ' + book.authorLName,
-//           coverURL: book.coverURL,
-//           available: book.available
-//         }
-//         bookObj.available = bookObj.available == "T" ? "Available" : "Taken";
-//         return(
-//           <ListItem key={book.bookID} style={{flex: 1, marginLeft: 0, paddingRight: 0 }} onPress={() => {
-//             if (book.available == "T") {
-//               ActionSheet.show(
-//                 {
-//                   options: [
-//                     { text: "Checkout", icon: "md-checkmark", iconColor: "#2c8ef4" },
-//                     { text: "Cancel", icon: "close", iconColor: "#25de5b" }
-//                   ],
-//                   cancelButtonIndex: 1,
-//                   title: bookObj.title
-//                 },
-//                 buttonIndex => {
-//                   switch (buttonIndex) {
-//                     case 0:
-//                       this._checkoutBook(book.bookID, bookObj.title);
-//                       break;
-//                     default:
-//
-//                   }
-//                 }
-//               )
-//             } else {
-//               ActionSheet.show(
-//                 {
-//                   options: [
-//                     { text: "Reserve", icon: "md-time", iconColor: "#2c8ef4" },
-//                     { text: "Cancel", icon: "close", iconColor: "#25de5b" }
-//                   ],
-//                   cancelButtonIndex: 1,
-//                   title: bookObj.title
-//                 },
-//                 buttonIndex => {
-//                   switch (buttonIndex) {
-//                     case 0:
-//                     this._reserveBook(book.bookID, bookObj.title)
-//                     break;
-//                     default:
-//
-//                   }
-//                 }
-//               )
-//
-//             }
-//           }}>
-//           <Grid>
-//             <Col size={1}>
-//               {/* <Thumbnail square large style={{resizeMode: 'contain'}} source={{ uri: bookObj.coverURL }} defaultSource={require('../../../Images/Book_Placeholder.png')} /> */}
-//               {/* {bookObj.coverURL != null ? <Thumbnail large square style={{resizeMode: 'contain'}} source={{ uri: bookObj.coverURL }} /> : <Thumbnail square large style={{resizeMode: 'contain'}} defaultSource={require('../../../Images/Book_Placeholder.png')} /> } */}
-//             </Col>
-//             <Col size={4} style={{ alignItems: 'center'}}>
-//               <Row>
-//                 <Text>Title: {bookObj.title}</Text>
-//               </Row>
-//               <Row>
-//                 <Text>Author: {bookObj.author}</Text>
-//               </Row>
-//             </Col>
-//             <Col size={1} >
-//               <Text>{bookObj.available}</Text>
-//             </Col>
-//           </Grid>
-//         </ListItem>
-//       );
-//     });
-//     }
-//   }
-//
-//   render() {
-//     return (
-//       <List style={{ flex: 1 }}>
-//         {this.renderBooks()}
-//       </List>
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-
 
 export default class Catalog extends React.Component {
   constructor() {
     super();
     this.vm = this;
+    this.curTime = new Date();
     this.userRef = db.collection('users');
     this.bookRef = db.collection('books');
     this.arRef = db.collection('activeRentals');
@@ -203,24 +42,43 @@ export default class Catalog extends React.Component {
       let count = 0;
       snapshot.forEach((bookDoc) => {
         let bookData = bookDoc.data();
-        if (bookData.bookTitle.includes(", The")) {
-          bookData.bookTitle = "The " + bookData.bookTitle.substr(0, (bookData.bookTitle.length - 5))
-        }
-
-        let curTime = new Date();
 
         bookData.bookRef = bookDoc;
-        bookData.key = count.toString();
 
         booksArray.push(bookData)
         this.setState({ books: booksArray });
+
+        if (booksArray.length > 1) {
+          booksArray.sort(function(a, b){
+            var keyA = a.bookTitle,
+            keyB = b.bookTitle;
+            // Compare the 2 dates
+            if(keyA < keyB) return -1;
+            if(keyA > keyB) return 1;
+            return 0;
+          });
+        }
+
+
+
         if (count == (snapshot.size - 1)) {
-          setTimeout(() => this.setState({ doneLoading: true })
-          , 350);
+            this.setState({ doneLoading: true })
+            this._fixBooks();
         }
         count++
       })
     })
+  }
+
+  _fixBooks() {
+    let booksArray = []
+    for (book of this.state.books) {
+      if (book.bookTitle.includes(", The")) {
+        book.bookTitle = "The " + book.bookTitle.substr(0, (book.bookTitle.length - 5))
+      }
+      booksArray.push(book)
+      this.setState({ books: booksArray })
+    }
   }
 
 
@@ -264,7 +122,8 @@ export default class Catalog extends React.Component {
               </Button>
             </Left>
             <Body>
-              <Title style={{color: '#F7F7F2'}}>Catalog</Title>
+              <Icon style={{fontSize: 15}} type="Entypo" name="book" />
+              <Title style={{color: '#F7F7F2' }}>Catalog</Title>
             </Body>
             <Right />
           </Header>
@@ -333,22 +192,22 @@ const BookList = (props) => {
       dataArray={props.books}
       renderRow={(item) => {
         return(
-          <ListItem style={{backgroundColor: '#F7F7F2', paddingLeft: 5, marginVertical: 10, flex: 1, borderRadius: 3 }}>
-            <Grid>
+          <ListItem style={{backgroundColor: '#F7F7F2', paddingLeft: 10, marginVertical: 5, flex: 1, borderRadius: 3 }}>
+            <Grid style={{backgroundColor: '#197278', paddingRight: 5, paddingVertical: 10, borderRadius: 3}}>
               <Col size={3}>
                 <Thumbnail square large style={{ height: 100,resizeMode: 'contain'}} source={{ uri: item.coverURL }} defaultSource={require('../../assets/Book_Placeholder.png')} />
               </Col>
               <Col size={8} style={{ alignItems: 'center' }}>
                 <Row size={1}>
                   <Col style={{ flex: 1 }}>
-                    <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 15}}>
+                    <Text style={{alignSelf: 'flex-start', color: '#F7F7F2', fontWeight: 'bold', fontSize: 15}}>
                       {item.bookTitle}
                     </Text>
                   </Col>
                 </Row>
                 <Row size={2}>
                   <Col style={{flex: 1 }}>
-                    <Text style={{ alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 12}}>
+                    <Text style={{ alignSelf: 'flex-start', color: '#F7F7F2', fontWeight: 'bold', fontSize: 12}}>
                       {item.authorFName + " " + item.authorLName}
                     </Text>
                   </Col>
@@ -357,12 +216,112 @@ const BookList = (props) => {
                   <Col style={{flex: 1, justifyContent: 'flex-end'  }}>
                     <Button
                       small
-                      style={{ backgroundColor: '#197278', alignSelf: 'flex-end'}}
+                      style={{ backgroundColor: '#F7F7F2', alignSelf: 'flex-end'}}
                       onPress={() => {
-                        alert("No")
+                        console.log("dbg: CHECK OUT PLZ");
+                        let bookCount = 0;
+                        let count = 0;
+                        AsyncStorage.getItem('role')
+                        .then((role) => {
+                          AsyncStorage.getItem('userId')
+                            .then((userId) => {
+
+                              props.vm.arRef.get()
+                              .then((snapshot) => {
+                                if (!snapshot.empty) {
+                                  console.log("dbg: snapshot.size: " + snapshot.size);
+                                  snapshot.forEach((rentalDoc) => {
+                                    let rentalData = rentalDoc.data();
+                                    let dbUserRef = rentalData.userId;
+                                    let stateUserRef = props.vm.userRef.doc(userId)
+                                    if (JSON.stringify(dbUserRef._documentPath) == JSON.stringify(stateUserRef._documentPath)) {
+                                      bookCount++;
+                                    }
+                                    console.log("dbg: count: " + count);
+                                    if (count == snapshot.size - 1) {
+                                      if (role == 'staff') {
+                                        if (bookCount > 2) {
+                                        alert("Sorry, but you are at your book limit")
+                                        }
+                                        else {
+                                          alert("Yeah sure")
+                                          let rentalInfo = {
+                                            rentalDate: new Date(),
+                                            dueDate: new Date(Date.now() + 1209600000),
+                                            bookId: item.bookRef.ref
+                                          }
+
+                                          props.vm.bookRef.doc(item.bookRef.id).update({
+                                            Available: false
+                                          })
+
+                                          props.vm.userRef.doc(userId).get()
+                                          .then((doc) => {
+                                            rentalInfo.userId = doc.ref;
+                                            props.vm.arRef.add(rentalInfo)
+                                          })
+                                        }
+                                      } else {
+                                        if (bookCount > 1) {
+                                          alert("Sorry, but you are at your book limit")
+                                        }
+                                        else {
+                                          alert("Yeah sure")
+                                          let rentalInfo = {
+                                            rentalDate: new Date(),
+                                            dueDate: new Date(Date.now() + 1209600000),
+                                            bookId: item.bookRef.ref
+                                          }
+
+                                          props.vm.bookRef.doc(item.bookRef.id).update({
+                                            Available: false
+                                          })
+
+                                          props.vm.userRef.doc(userId).get()
+                                          .then((doc) => {
+                                            rentalInfo.userId = doc.ref;
+                                            props.vm.arRef.add(rentalInfo)
+                                          })
+                                        }
+                                      }
+                                    }
+                                    count++;
+                                  })
+                                } else { // no current rentals in DB
+                                  // Allow checkout
+                                  console.log("dbg: no rentals");
+
+                                    let rentalInfo = {
+                                      rentalDate: new Date(),
+                                      dueDate: new Date(Date.now() + 1209600000),
+                                      bookId: item.bookRef.ref
+                                    }
+
+                                    props.vm.bookRef.doc(item.bookRef.id).update({
+                                      Available: false
+                                    })
+
+                                    props.vm.userRef.doc(userId).get()
+                                    .then((doc) => {
+                                      rentalInfo.userId = doc.ref;
+                                      props.vm.arRef.add(rentalInfo)
+                                    })
+
+                                }
+                              })
+
+
+
+
+
+
+
+                          })
+                        })
+                        // alert(new Date(rentalInfo.dueDate))
                       }}
                     >
-                      <Text style={{ fontWeight: 'bold', fontSize: 15}}>
+                      <Text style={{ color: '#197278', fontWeight: 'bold', fontSize: 15}}>
                         {item.Available ? "Check Out" : "Reserve" }
                       </Text>
                     </Button>

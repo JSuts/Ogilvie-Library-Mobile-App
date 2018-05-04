@@ -317,6 +317,7 @@ export default class Home extends React.Component {
             </Button>
           </Left>
           <Body>
+            <Icon style={{fontSize: 15}} type="Entypo" name="home" />
             <Title style={{color: '#F7F7F2'}}>Home</Title>
           </Body>
           <Right />

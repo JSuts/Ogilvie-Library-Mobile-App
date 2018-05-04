@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage, Keyboard } from 'react-native'
+import { AsyncStorage, Keyboard, Image } from 'react-native'
 import { Button, Content, Form, Input, Item, Label, Text } from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import styles from './styles';
@@ -11,6 +11,10 @@ import AuthServices from '../../lib/AuthServices'
 const SignUp = (props) => {
   return (
     <Content padder style={styles.contentContainer} >
+      <Image
+        style={{backgroundColor: '#261C15'}}
+        source={require('../../../assets/Ogilogo.png')}
+      />
       <Text style={styles.titleText}>
         Welcome, Hedgehog!
       </Text>
