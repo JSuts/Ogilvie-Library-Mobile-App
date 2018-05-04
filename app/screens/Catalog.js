@@ -194,6 +194,10 @@ const BookList = (props) => {
                                             alert("Successfully checked out " + item.bookTitle)
                                             props.vm.setState({ doneLoading: false})
                                             props.vm._getFireBooks();
+                                            fetch('http://jake.westmec-coding.org/api/notifyMe/' + userId)
+                                            .then((response) => {
+                                              return
+                                            })
                                           })
                                         }
                                       } else {
@@ -218,6 +222,10 @@ const BookList = (props) => {
                                             alert("Successfully checked out " + item.bookTitle)
                                             props.vm.setState({ doneLoading: false})
                                             props.vm._getFireBooks();
+                                            fetch('http://jake.westmec-coding.org/api/notifyMe/' + userId)
+                                            .then((response) => {
+                                              return
+                                            })
                                           })
                                         }
                                       }
@@ -244,6 +252,10 @@ const BookList = (props) => {
                                       alert("Successfully checked out " + item.bookTitle)
                                       props.vm.setState({ doneLoading: false})
                                       props.vm._getFireBooks();
+                                      fetch('http://jake.westmec-coding.org/api/notifyMe/' + userId)
+                                      .then((response) => {
+                                        return
+                                      })
                                     })
                                 }
                               })
