@@ -11,6 +11,7 @@ import MapScreen  from '../screens/Map';
 import Sidebar  from '../components/Sidebar';
 import Auth  from '../screens/Auth';
 import Settings  from '../screens/Settings';
+import Report  from '../screens/Report';
 
 
 
@@ -35,6 +36,9 @@ const HomeDrawerNavigator = DrawerNavigator(
     },
     Settings: {
       screen: Settings
+    },
+    Report: {
+      screen: Report
     },
   },
   {

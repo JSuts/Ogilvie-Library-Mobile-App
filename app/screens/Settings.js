@@ -30,10 +30,8 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 export default class Settings extends React.Component {
   constructor() {
     super();
-    this.state = {
-      username: "",
-      password: "",
-    }
+    this.vm = this;
+
   }
 
 
@@ -51,11 +49,21 @@ export default class Settings extends React.Component {
           </Left>
           <Body>
             <Icon style={{fontSize: 15}} type="MaterialIcons" name="settings" />
-            <Title style={{color: '#F7F7F2'}}>Map</Title>
+            <Title style={{color: '#F7F7F2'}}>Settings</Title>
           </Body>
           <Right />
         </Header>
-        <Content>
+        <Content padder style={{backgroundColor: '#261C15', flex: 1}}>
+          <Button
+            style={{marginBottom: 20, backgroundColor: 'rgb(200,100,100)'}}
+            onPress={() => {
+              this.props.navigation.navigate("Report")
+            }}
+            >
+            <Text>
+              Send a bug report
+            </Text>
+          </Button>
           <Button
             onPress={() => {
               let userKeys = [
@@ -82,6 +90,9 @@ export default class Settings extends React.Component {
                 Sign Out
               </Text>
             </Button>
+            <Text style={{fontWeight: '100', fontSize: 10, color: '#F7F7F2' }}>
+              TWITTER, TWEET, RETWEET and the Twitter logo are trademarks of Twitter, Inc. or its affiliates
+            </Text>
 
         </Content>
       </Container>

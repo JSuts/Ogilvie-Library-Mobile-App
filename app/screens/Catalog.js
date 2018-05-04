@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, FlatList, AsyncStorage } from 'react-native';
+import { StyleSheet, View, Image, FlatList, AsyncStorage, Alert } from 'react-native';
 import { Root, ActionSheet, Body, Input, Button, Container, Content, Drawer, Footer, FooterTab, Header, Icon, Left, List, ListItem, Right, Text, Title, Thumbnail, Spinner, Form, Item } from 'native-base';
 import { Col, Row, Grid } from "react-native-easy-grid";
 // import { store } from "../../store/store.js"
@@ -81,34 +81,6 @@ export default class Catalog extends React.Component {
     }
   }
 
-
-
-
-  // _getBooks() {
-  //   let request = new XMLHttpRequest();
-  //
-  //   request.onreadystatechange = (e) => {
-  //     if (request.readyState == 4) {
-  //       if (request.status == 200) {
-  //         let data = JSON.parse(request.responseText);
-  //
-  //         this.setState({
-  //           books: data
-  //         })
-  //
-  //
-  //       } else {
-  //         console.log(request.status);
-  //         console.warn('fetching books failure :\\');
-  //       }
-  //     }
-  //   }
-  //
-  //   let url = "http://jake.westmec-coding.org/api/getBooks"
-  //   request.open('GET', url)
-  //   request.send();
-  // }
-
   render() {
     return (
         <Container>
@@ -127,59 +99,12 @@ export default class Catalog extends React.Component {
             </Body>
             <Right />
           </Header>
-        <Content padder style={{backgroundColor: '#261C15', flex: 1}}>
-          {this.state.doneLoading ? <Filter books={this.state.books} vm={this.vm} /> : null}
-          {this.state.doneLoading && this.state.filteredBooks.length == 0 ? <BookList books={this.state.books} navigation={this.props.navigation} vm={this.vm} /> : null}
-          {this.state.filteredBooks.length > 0 ? <BookList books={this.state.filteredBooks} navigation={this.props.navigation} vm={this.vm} /> : null}
-          {this.state.doneLoading ? null : <Spinner color='#CC4316' />}
-        </Content>
-          {/* <Header style={{ backgroundColor: 'lightblue'}}>
-            <Left>
-              <Button transparent onPress={ () => this.props.navigation.navigate("DrawerOpen")}>
-                <Icon name='menu' />
-              </Button>
-            </Left>
-            <Body>
-              <Title style={{ fontWeight: 'bold', fontSize: 21}}>Library Books</Title>
-            </Body>
-            <Right>
-              <Button transparent>
-                <Icon
-                  name='refresh'
-                  onPress={() => {
-                    this.setState({
-                      books: []
-                    })
-                    this._getBooks()
-                  }}
-                />
-              </Button>
-            </Right>
-          </Header> */}
-
-        {/*
-          <Content style={{backgroundColor: 'skyblue'}}>
-            <Grid>
-              {/* Info Bar at the top of the Books }
-              <Row size={1} style={{backgroundColor: 'white'}}>
-                <Col size={1} style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-                  <Text>Book Cover</Text>
-                </Col>
-                <Col size={4} style={{ justifyContent: 'flex-end', alignItems: 'center'}}>
-                    <Text>Title and Information</Text>
-                </Col>
-                <Col size={1} style={{ flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center' }}>
-                  <Text>Status</Text>
-                </Col>
-              </Row>
-
-              {/* Books }
-              <Row size={8}>
-                <DisplayBooks books={this.state.books} />
-              </Row>
-            </Grid>
+          <Content padder style={{backgroundColor: '#261C15', flex: 1}}>
+            {this.state.doneLoading ? <Filter books={this.state.books} vm={this.vm} /> : null}
+            {this.state.doneLoading && this.state.filteredBooks.length == 0 ? <BookList books={this.state.books} navigation={this.props.navigation} vm={this.vm} /> : null}
+            {this.state.filteredBooks.length > 0 ? <BookList books={this.state.filteredBooks} navigation={this.props.navigation} vm={this.vm} /> : null}
+            {this.state.doneLoading ? null : <Spinner color='#CC4316' />}
           </Content>
-          */}
         </Container>
     );
   }
@@ -218,18 +143,27 @@ const BookList = (props) => {
                       small
                       style={{ backgroundColor: '#F7F7F2', alignSelf: 'flex-end'}}
                       onPress={() => {
-                        console.log("dbg: CHECK OUT PLZ");
+                        let action = "";
+                        if (item.Available) {
+                          action = "Check Out"
+                        } else {
+                          action = "Reserve"
+                        }
+                        Alert.alert(
+                        'Alert',
+                         action + " " + item.bookTitle + '?',
+                        [
+                          {text: 'Yes', onPress: () => {
+                            if (item.Available) {
                         let bookCount = 0;
                         let count = 0;
                         AsyncStorage.getItem('role')
                         .then((role) => {
                           AsyncStorage.getItem('userId')
                             .then((userId) => {
-
                               props.vm.arRef.get()
                               .then((snapshot) => {
                                 if (!snapshot.empty) {
-                                  console.log("dbg: snapshot.size: " + snapshot.size);
                                   snapshot.forEach((rentalDoc) => {
                                     let rentalData = rentalDoc.data();
                                     let dbUserRef = rentalData.userId;
@@ -237,14 +171,12 @@ const BookList = (props) => {
                                     if (JSON.stringify(dbUserRef._documentPath) == JSON.stringify(stateUserRef._documentPath)) {
                                       bookCount++;
                                     }
-                                    console.log("dbg: count: " + count);
                                     if (count == snapshot.size - 1) {
                                       if (role == 'staff') {
                                         if (bookCount > 2) {
-                                        alert("Sorry, but you are at your book limit")
+                                        alert("Sorry, but you are at your book limit. Please return one of you other books first.")
                                         }
                                         else {
-                                          alert("Yeah sure")
                                           let rentalInfo = {
                                             rentalDate: new Date(),
                                             dueDate: new Date(Date.now() + 1209600000),
@@ -259,14 +191,16 @@ const BookList = (props) => {
                                           .then((doc) => {
                                             rentalInfo.userId = doc.ref;
                                             props.vm.arRef.add(rentalInfo)
+                                            alert("Successfully checked out " + item.bookTitle)
+                                            props.vm.setState({ doneLoading: false})
+                                            props.vm._getFireBooks();
                                           })
                                         }
                                       } else {
                                         if (bookCount > 1) {
-                                          alert("Sorry, but you are at your book limit")
+                                          alert("Sorry, but you are at your book limit. Please return one of you other books first.")
                                         }
                                         else {
-                                          alert("Yeah sure")
                                           let rentalInfo = {
                                             rentalDate: new Date(),
                                             dueDate: new Date(Date.now() + 1209600000),
@@ -281,6 +215,9 @@ const BookList = (props) => {
                                           .then((doc) => {
                                             rentalInfo.userId = doc.ref;
                                             props.vm.arRef.add(rentalInfo)
+                                            alert("Successfully checked out " + item.bookTitle)
+                                            props.vm.setState({ doneLoading: false})
+                                            props.vm._getFireBooks();
                                           })
                                         }
                                       }
@@ -289,7 +226,6 @@ const BookList = (props) => {
                                   })
                                 } else { // no current rentals in DB
                                   // Allow checkout
-                                  console.log("dbg: no rentals");
 
                                     let rentalInfo = {
                                       rentalDate: new Date(),
@@ -305,20 +241,21 @@ const BookList = (props) => {
                                     .then((doc) => {
                                       rentalInfo.userId = doc.ref;
                                       props.vm.arRef.add(rentalInfo)
+                                      alert("Successfully checked out " + item.bookTitle)
+                                      props.vm.setState({ doneLoading: false})
+                                      props.vm._getFireBooks();
                                     })
-
                                 }
                               })
-
-
-
-
-
-
-
                           })
                         })
-                        // alert(new Date(rentalInfo.dueDate))
+                      }
+                      else {
+                        alert("Successfully Reserved " + item.bookTitle)
+                      }
+                      }},
+                      {text: 'Cancel', onPress: () => null, style: 'cancel'},]
+                    )
                       }}
                     >
                       <Text style={{ color: '#197278', fontWeight: 'bold', fontSize: 15}}>

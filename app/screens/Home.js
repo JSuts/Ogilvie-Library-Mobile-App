@@ -416,11 +416,6 @@ const BookList = (props) => {
                       </Col>
                     </Row>
                     <Row size={1}>
-                      <Col style={{flex: 1, justifyContent: 'flex-start'  }}>
-                        <Button small style={{ backgroundColor: '#1DA1F2', alignSelf: 'flex-start', borderRadius: 5}}>
-                          <Thumbnail square small style={{resizeMode: 'contain', borderRadius: 5}} source={require('../../assets/Twitter_Logo_WhiteOnBlue.png')} />
-                        </Button>
-                      </Col>
                       <Col style={{flex: 1, justifyContent: 'flex-end'  }}>
                         <Button
                           small
@@ -506,6 +501,19 @@ const BookList = (props) => {
           <Col>
             <Button
               block
+              style={{ marginTop: 20, backgroundColor: '#197278' }}
+              onPress={() => {
+                props.navigation.navigate("Connect")
+              }}
+              >
+                <Thumbnail small square source={require('../../assets/Twitter_Logo_Blue.png')} />
+              </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Button
+              block
               style={{ marginTop: 20, backgroundColor: '#197278', }}
               onPress={() => {
                 props.navigation.navigate("Map")
@@ -551,115 +559,3 @@ const BookList = (props) => {
     )
   }
 }
-
-// class BookList extends React.Component {
-//   render() {
-//     return(
-//       <List
-//         dataArray={this.props.books}
-//         renderRow={(item) => {
-//           if (item != undefined) {
-//             return(
-//               <ListItem>
-//                 <Text>
-//                   {item.bookTitle}
-//                 </Text>
-//               </ListItem>
-//             )
-//           } else {
-//             return(null)
-//           }
-//         }}
-//       />
-//     )
-//   }
-// }
-//
-//
-// class VisitList extends React.Component {
-//   render() {
-//     return (
-//       <List>
-//         <ListItem onPress={() => {
-//           this.props.navigation.navigate("Browse");
-//         }}>
-//           <Text> Visit Our Catalog </Text>
-//         </ListItem>
-//       </List>
-//     )
-//   }
-// }
-//
-//
-// class LateList extends React.Component {
-//   render() {
-//     return(
-//       <List
-//         dataArray={this.props.books}
-//         renderRow={(item) => {
-//           if (item != undefined) {
-//             return(
-//               <ListItem>
-//                 <Grid>
-//                   <Row>
-//                     <Text>
-//                       {item.bookTitle}
-//                     </Text>
-//                   </Row>
-//                   <Row>
-//                     <Text>
-//                       Day's Late: {item.daysLate}
-//                     </Text>
-//                   </Row>
-//               </Grid>
-//               </ListItem>
-//             )
-//           } else {
-//             return(null)
-//           }
-//         }}
-//       />
-//     )
-//   }
-// }
-//
-// class RenderHomePage extends React.Component {
-//   render() {
-//     return (
-//       <Grid style={{ backgroundColor: 'skyblue' }}>
-//         <Row size={12} style={{ marginTop: 20, marginHorizontal: 10, borderRadius: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
-//           <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
-//
-//             Welcome, {this.props.userData.name}!
-//           </Text>
-//         </Row>
-//           <Row size={28} style={{}}>
-//             <Content style={{ flex: 1, marginVertical: 25, marginHorizontal: 10, padding: 5, borderWidth: 3, borderColor: 'black', borderRadius: 5, backgroundColor: 'white'}}>
-//               <Text>
-//                 Books Checked Out: {this.props.userData.books.length}
-//               </Text>
-//               {this.props.userData.books.length == 0 ? <VisitList navigation={this.props.navigation} /> : <BookList books={this.props.books} />}
-//             </Content>
-//           </Row>
-//           <Row size={20} style={{ }}>
-//             <Content style={{ flex: 1, marginVertical: 10, marginHorizontal: 10, padding: 5, borderWidth: 3, borderColor: 'black', borderRadius: 5, backgroundColor: 'white'}}>
-//               <Text>
-//                 Late Books
-//               </Text>
-//               {this.props.lateBooks.length == 0 ? <Text>Good Job!</Text> : <LateList books={this.props.lateBooks} />}
-//             </Content>
-//           </Row>
-//           <Row size={20} style={{ }}>
-//             <Content style={{ flex: 1, marginVertical: 10, marginHorizontal: 10, padding: 5, borderWidth: 3, borderColor: 'black', borderRadius: 5, backgroundColor: 'white'}}>
-//               <Text>
-//                 Reservations
-//               </Text>
-//               <BookList books={this.props.reservations} />
-//             </Content>
-//           </Row>
-//           <Row size={20} style={{ }}>
-//           </Row>
-//       </Grid>
-//     )
-//   }
-// }
