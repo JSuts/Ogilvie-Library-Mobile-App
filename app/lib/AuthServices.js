@@ -17,19 +17,22 @@ module.exports = {
           userRef.get()
           .then((snapshot) => {
             snapshot.forEach((doc) => {
-
-              let dbUsername = doc.data().username.toLowerCase();
-              if (username == dbUsername) {
-                let dbPassword = doc.data().password;
-                if (md5(password) == dbPassword) {
-                  let response = {
-                    docId: doc.id,
-                    userData: doc.data()
+              if (doc.data().username) {
+                let dbUsername = doc.data().username.toLowerCase();
+                if (username == dbUsername) {
+                  let dbPassword = doc.data().password;
+                  if (md5(password) == dbPassword) {
+                    let response = {
+                      docId: doc.id,
+                      userData: doc.data()
+                    }
+                    resolve(response)
+                  } else {
+                    reject("Password does not match")
                   }
-                  resolve(response)
-                } else {
-                  reject("Password does not match")
                 }
+              } else {
+                return
               }
             })
             reject("No matching accounts")

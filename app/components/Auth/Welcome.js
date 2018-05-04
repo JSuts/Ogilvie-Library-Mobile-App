@@ -1,4 +1,5 @@
 import React from 'react';
+import { Image } from 'react-native'
 import { Button, Content, Text } from 'native-base'
 import { Col, Row, Grid } from "react-native-easy-grid";
 import styles from './styles';
@@ -7,6 +8,10 @@ import styles from './styles';
 const Welcome = (props) => {
   return (
     <Content padder style={styles.contentContainer} >
+      <Image
+        style={{backgroundColor: '#261C15'}}
+        source={require('../../../assets/Ogilogo.png')}
+      />
       <Text style={styles.titleText}>
         Welcome, Hedgehog!
       </Text>

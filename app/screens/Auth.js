@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, Image } from 'react-native'
 import { Container } from 'native-base';
 
 import { Activity, Welcome, SignIn, SignUp, Error, TopBuffer } from '../components/Auth'
@@ -32,7 +32,7 @@ export default class Auth extends React.Component {
   render() {
     return (
       <Container>
-        <TopBuffer />
+        {/* <TopBuffer /> */}
         { this.state.signUp && (this.state.invalidEmail || this.state.invalidPasswords) && <Error /> }
         { this.state.loading && <Activity /> }
         { this.state.initialState && <Welcome vm={this.vm} /> }

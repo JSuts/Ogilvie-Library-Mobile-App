@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, FlatList, ImageBackground } from 'react-native';
+import { AsyncStorage, View, Image, FlatList, ImageBackground } from 'react-native';
 import {
   Container,
   Icon,
@@ -41,7 +41,32 @@ export default class Settings extends React.Component {
   render() {
     return (
       <Container>
-
+        <Button
+          onPress={() => {
+            let userKeys = [
+              'userId',
+              'fees',
+              'lName',
+              'role',
+              'username',
+              'email',
+              'fName'
+            ]
+            AsyncStorage.multiRemove(userKeys)
+            .then((response) => {
+              console.log("dbg: remove userKeys keys: " + response);
+              this.props.navigation.navigate("AuthLoading")
+            })
+            .catch((err) => {
+              alert("Error Signing Out... ");
+              console.log("Error Signing Out... Error: " + err);
+            })
+          }}
+        >
+          <Text>
+            Sign Out
+          </Text>
+        </Button>
       </Container>
     );
   }

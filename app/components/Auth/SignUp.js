@@ -259,7 +259,6 @@ const SignUp = (props) => {
                         ['fName', response.userData.fName],
                         ['lName', response.userData.lName],
                         ['role', response.userData.role],
-                        ['fees', response.userData.fees.toString()],
                         ['username', response.userData.username],
                         ['email', response.userData.email]
                       ]
